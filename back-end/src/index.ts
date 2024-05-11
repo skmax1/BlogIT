@@ -1,15 +1,45 @@
 import { Hono } from 'hono'
 import { PrismaClient } from '@prisma/client/edge'
 import { withAccelerate } from '@prisma/extension-accelerate'
+import { decode, jwt, sign, verify } from 'hono/jwt'
 
-const app = new Hono()
+const app = new Hono<{
+  Bindings: {
+    DATABASE_URL: string,
+    JWT_SECRET: string
+  }
+}>()
 
-const prisma = new PrismaClient({
-  datasourceUrl:env.DATABASR_URL,
-}).$extends(withAccelerate())
+app.post('/api/v1/signup', async (c) => {
 
-app.post('/api/v1/signup', (c) => {
-  return c.text('SignUp Route')
+  const prisma = new PrismaClient({
+    datasourceUrl:c.env.DATABASE_URL,
+  }).$extends(withAccelerate());
+
+  const body = await c.req.json();
+
+  try{
+
+   const user = await prisma.user.create({
+      data: {
+        email: body.email,
+        password: body.password
+      }
+    })
+  
+    const token = await sign({id: user.Id},c.env.JWT_SECRET)
+
+    return c.json({
+      token: token
+    })
+
+  }catch(e){
+
+    return c.json({
+      msg: 'Error while creating user'
+    })
+
+  }
 })
 
 app.post('/api/v1/sigin',(c) => {
@@ -27,5 +57,7 @@ app.put('/api/v1/blog', (c) => {
 app.get('/api/v1/blog/:id', (c) => {
   return c.text("Blog get route")
 })
+
+app.get('/api/v1/blog/bulk')
 
 export default app
