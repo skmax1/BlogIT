@@ -1,8 +1,8 @@
 {
-  "name": "common",
+  "name": "@sparta1/blogit-common",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/zods.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
