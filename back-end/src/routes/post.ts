@@ -2,7 +2,7 @@ import { PrismaClient } from "@prisma/client/edge";
 import { withAccelerate } from "@prisma/extension-accelerate";
 import { Hono } from "hono"
 import { verify } from "hono/jwt";
-import {createPostBody,updatePostBody}  from '../../../common/src/postzod'
+import {createPostBody,updatePostBody}  from '@sparta1/blogit-common'
 
 export const postRouter = new Hono<{
     Bindings:{
