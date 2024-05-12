@@ -17,18 +17,27 @@ export const postRouter = new Hono<{
 
 postRouter.use('/*', async (c,next) =>{
     const authHeader = c.req.header("Authorization") || "";
-    const decoded = await verify(authHeader,c.env.JWT_SECRET)
-    if(decoded){
 
-        c.set("userId",decoded.id)
-        await next();
-    }
-    else {
+    try{
+        const decoded = await verify(authHeader,c.env.JWT_SECRET)
+        if(decoded){
+    
+            c.set("userId",decoded.id)
+            await next();
+        }
+        else {
+            c.status(403);
+            c.json({
+                msg: "User not looged in"
+            })
+        }
+    }catch(e){
         c.status(403);
-        c.json({
-            msg: "Auth failed"
+        return c.json({
+            msg: "Authentication failed"
         })
     }
+ 
     
 })
 
