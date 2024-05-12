@@ -2,6 +2,7 @@ import { PrismaClient } from "@prisma/client/edge";
 import { withAccelerate } from "@prisma/extension-accelerate";
 import { Hono } from "hono"
 import { verify } from "hono/jwt";
+import {createPostBody,updatePostBody}  from '../../../common/src/postzod'
 
 export const postRouter = new Hono<{
     Bindings:{
@@ -52,6 +53,15 @@ postRouter.post('/', async (c) => {
 
     const body = await c.req.json();
 
+    const success  = createPostBody.safeParse(body);
+
+    if(!success){
+        c.status(411)
+        return c.json({
+            message: 'Invalid inputs'
+        })
+    }
+try{
     const post = await prisma.post.create({
         data:{
             title: body.title,
@@ -63,6 +73,13 @@ postRouter.post('/', async (c) => {
     return c.json({
         postId: post.Id
     })
+} catch(e){
+    c.status(411);
+    console.log(e);
+    c.json({
+        message: "Error while creating"
+    })
+}
   })
   
 
@@ -75,6 +92,15 @@ postRouter.post('/', async (c) => {
         datasourceUrl: c.env.DATABASE_URL
     }).$extends(withAccelerate())
 
+    const success = updatePostBody.safeParse(body);
+
+    if(!success){
+        c.status(411);
+        return c.json({
+            message: "Invalid inputs"
+        })
+    }
+try{
     const blog = await prisma.post.update({
         where:{
             Id: body.id
@@ -89,6 +115,15 @@ postRouter.post('/', async (c) => {
         id: blog.Id,
         msg: 'Updated sucessfully'
     })
+
+} catch(e){
+    c.status(411);
+    console.log(e);
+    c.json({
+        message: "Error while updating"
+    })
+
+}
     
   })
 
