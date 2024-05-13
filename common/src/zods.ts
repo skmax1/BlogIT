@@ -1,4 +1,4 @@
-import zod, { string } from "zod"
+import zod from "zod"
 
 export const signUpBody = zod.object({
     email: zod.string().email(),
@@ -21,9 +21,9 @@ export const createPostBody = zod.object({
 
 
 export const updatePostBody = zod.object({
-    id: string(),
-    title: string(),
-    writeup: string()
+    id: zod.string(),
+    title: zod.string(),
+    writeup: zod.string()
 })
 
 //export types
