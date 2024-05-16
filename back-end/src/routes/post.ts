@@ -137,7 +137,21 @@ try{
     
     
         try{
-            const bulk = await prisma.post.findMany();
+            const bulk = await prisma.post.findMany({
+                select:{
+                    Id:true,
+                    title: true,
+                    writeup: true,
+                    authourId: true,
+                    authour:{
+                        select:
+                        {
+                            firstName: true,
+                            lastName: true
+                        }
+                    }
+                }
+            });
     
             return c.json({
                 msg: "Fetch sucessfull",
@@ -167,6 +181,18 @@ try{
     const getPost = await prisma.post.findFirst({
         where:{
             Id: id
+        },
+        select:{
+            Id:true,
+            authourId:true,
+            title: true,
+            writeup: true,
+            authour:{
+                select:{
+                    firstName:true,
+                    lastName:true
+                }
+            }
         }
     })
 
