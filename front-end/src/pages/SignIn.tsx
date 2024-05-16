@@ -20,7 +20,7 @@ export const SignIn = () =>{
             const response = await axios.post(`${BACKEND_URL}/api/v1/user/sigin`,getInputs);
             const jwt = response.data.token;
             localStorage.setItem("token",jwt)
-            navigate('/post')
+            navigate('/blogs')
         }catch(e){
             //throw error
         }     
